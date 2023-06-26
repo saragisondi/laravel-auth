@@ -11,10 +11,11 @@
 
   <div class="row justify-content-center">
 
-    <h4 class="my-5">Ultimo Progetto</h4>
+    <h4 class="my-5">Ultimo Progetto: <span class="fw-bold">{{ $last_project->title }}</span> </h4>
 
     <div>
       <h5 class="fw-bold">{{ $last_project->title }}</h5>
+      <img class="w-50" src="{{asset('storage/' . $project->image_path)}}" alt="{{$project->title}}">
       <p>{!! $last_project->text !!}</p>
     </div>
 

@@ -60,7 +60,7 @@
     </div>
 
     <div>
-      <img class="my-3" width="150px" id="prev-image" src="{{asset('storage/' . $project->image_path)}}" alt="">
+      <img class="my-3" width="150px" id="prev-image" src="{{asset('storage/' . $project->image_path)}}" onerror="this.src='https://t3.ftcdn.net/jpg/02/48/42/64/360_F_248426448_NVKLywWqArG2ADUxDq6QprtIzsF82dMF.jpg'">
     </div>
 
 

@@ -110,6 +110,24 @@ class ProjectController extends Controller
 
       $project->update($form_data);
 
+
+
+      $form_data['slug'] = Project::generateSlug($form_data['title']);
+      $form_data['date'] = date('Y-m-d');
+
+      if(array_key_exists('image',$form_data)){
+
+        if($project->image){
+          Storage::disk('public')->delete($project->image_path);
+        }
+
+        $form_data['image_original_name'] = $request->file('image')->getClientOriginalName();
+
+        $form_data['image_path'] = Storage::put('uploads', $form_data['image']);
+
+      }
+
+
       return redirect()->route('admin.projects.show', $project);
     }
 
@@ -121,6 +139,11 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+
+      if($project->image){
+        Storage::disk('public')->delete($project->image_path);
+      }
+
       $project->delete();
       return redirect()->route('admin.projects.index')->with('deleted', "Il progetto $project->title è stato eliminato correttamente");
     }

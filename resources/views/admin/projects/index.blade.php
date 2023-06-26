@@ -3,6 +3,15 @@
 @section('content')
 
 <div class="container p-5 ">
+
+  @if (session('deleted'))
+    <div class="alert alert-success" role="alert">
+      {{ session('deleted') }}
+    </div>
+  @endif
+
+
+
   <h2 class="my-4 fs-4 text-secondary fw-bold">
     Elenco Progetti
   </h2>

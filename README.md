@@ -323,7 +323,14 @@ Completare la CRUD del portfolio con l’aggiunta dell’immagine e la sua relat
 - Importo lo *Storage* in *ProjectController*:
 `use Illuminate\Support\Facades\Storage;`
 
-- Nella funzione *store* verifico se è stata caricata un'immagine, salvo il nome dell'immagine, salvo l'immagine nella cartella *uploads* e il percorso
+- Nella funzione *store* verifico se è stata caricata un'immagine, salvo il nome dell'immagine, salvo l'immagine nella cartella *uploads* e il percorso:
+
+  `if(array_key_exists('image',$form_data)){` <br>
+
+    `$form_data['image_original_name'] = $request->file('image')->getClientOriginalName();` <br>
+
+    `$form_data['image_path'] = Storage::put('uploads',` `$form_data['image']);` <br>
+        `}`
 
 - In *show.blade.php* inserisco `{{asset('storage/' . $project->image_path)}}` per visualizzare l'immagine
 
@@ -333,3 +340,14 @@ Completare la CRUD del portfolio con l’aggiunta dell’immagine e la sua relat
           `tagImage.src = URL.createObjectURL(event.target.files[0]);`<br>
         `}`
 
+- In *ProjectController* nella funzione *edit* oltre a verificare se è stata caricata l'immagine inserisco la condizione per cui se ne carico una nuova viene eliminata la vecchia:
+
+  `if($project->image){` <br>
+            `Storage::disk('public')->delete($project->image_path);` <br>
+          `}`
+
+- In *ProjectController* nella funzione *destroy* inserisco la condizione che se il progetto da eliminare contiene un'immagine, la devo cancellare:
+
+  `if($project->image){` <br>
+            `Storage::disk('public')->delete($project->image_path);` <br>
+          `}`

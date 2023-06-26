@@ -49,6 +49,21 @@
     </textarea>
     </div>
 
+    <div class="my-5 mb-3">
+      <label for="file" class="form-label fw-bold">Immagine</label>
+      <input
+      type="file"
+      onchange="showImage(event)"
+      class="form-control"
+      id="image"
+      name="image">
+    </div>
+
+    <div>
+      <img class="my-3" width="150px" id="prev-image" src="" alt="">
+    </div>
+
+
     <button type="submit" class="btn btn-primary">Invia</button>
   </form>
 
@@ -62,6 +77,12 @@
       .catch( error => {
           console.error( error );
       } );
+
+      function showImage(event){
+    const tagImage = document.getElementById('prev-image');
+    tagImage.src = URL.createObjectURL(event.target.files[0]);
+    // console.log(URL.createObjectURL(event.target.files[0]));
+  }
 </script>
 
 

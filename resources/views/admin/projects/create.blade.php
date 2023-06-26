@@ -61,9 +61,11 @@
       name="image">
     </div>
 
-    <img width="150px" id="prev-image" src="" alt="">
+    <div>
+      <img class="my-3" width="150px" id="prev-image" src="" alt="">
+    </div>
 
-    <button type="submit" class="btn btn-primary">Invia</button>
+    <button type="submit" class="my-3 btn btn-primary">Invia</button>
   </form>
 
 </div>

@@ -60,7 +60,7 @@
     </div>
 
     <div>
-      <img class="my-3" width="150px" id="prev-image" src="" alt="">
+      <img class="my-3" width="150px" id="prev-image" src="{{asset('storage/' . $project->image_path)}}" alt="">
     </div>
 
 

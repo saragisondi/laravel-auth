@@ -36,20 +36,44 @@
           <td><a href="{{route('admin.projects.show', $project)}}" class="btn btn-success" title="Vai"><i class="fa-solid fa-eye"></i></a></td>
           <td><a href="{{route('admin.projects.edit', $project)}}" class="btn btn-warning" title="Modifica"><i class="fa-solid fa-pencil"></i></a></td>
           <td>
-          <form
-            action="{{route('admin.projects.destroy', $project)}}"
-            method="POST"
-            onsubmit="return confirm('confermi l\'eliminazione di {{$project->title}} ?')">
-            @csrf
-          @method('DELETE')
 
-          <button
-          type="submit"
-          title="elimina"
-          class="btn btn-danger ">
-            <i class="fa-solid fa-trash-can"></i>
-          </button>
-          </form>
+            <!-- Button trigger modal -->
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              <i class="fa-solid fa-trash-can"></i>
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5 text-danger fw-bold" id="exampleModalLabel"> Attenzione </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    Sei sicuro di voler eliminare {{ $project->title}}?
+                  </div>
+
+                  {{-- Delete --}}
+                  <form
+                    action="{{route('admin.projects.destroy', $project)}}"
+                    method="POST">
+                      @csrf
+                      @method('DELETE')
+
+                    <div class="modal-footer">
+                      <button
+                      type="submit"
+                      class="btn btn-danger fw-bold">
+                      Elimina
+                      </button>
+
+                      <button type="button" class="btn btn-secondary fw-bold" data-bs-dismiss="modal">Annulla</button>
+                  </form>
+
+                </div>
+              </div>
+            </div>
           </td>
         </tr>
       @endforeach

@@ -15,6 +15,8 @@
         @vite(['resources/scss/appGuest.scss', 'resources/js/appGuest.js'])
     </head>
     <body>
-      @yield('content')
+
+        @yield('content')
+
     </body>
 </html>

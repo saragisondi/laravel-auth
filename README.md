@@ -64,6 +64,8 @@ Il seeder è opzionale, l’importante che tutta la CRUD funzioni correttamente 
 
 <br>
 
+### **Steps:**
+
 *Layout:*
 - Creo una navbar con il link che mi porta alla *Home*
 
@@ -296,5 +298,38 @@ Il seeder è opzionale, l’importante che tutta la CRUD funzioni correttamente 
 ### **Descrizione**:
 Completare la CRUD del portfolio con l’aggiunta dell’immagine e la sua relativa eliminazione.
 
+<br>
 
-- 
+### **Steps:**
+
+- Imposto il *FYLESYSTEM* in public
+
+- Faccio diventare pubblica la cartella *storage* creandone un symlink:
+`php artisan storage:link`
+
+- Aggiungo al form del file *create.blade.php* `enctype="multipart/form-data"` 
+
+- Aggiungo il file dell'upload dell'immagine nella input
+
+- Faccio l'update della tabella per aggiornare il DB con i campi *path_image* e *original_image*:
+`php artisan:make migration update_projects_table --table=projects`
+
+- Nella funzione *up* inserisco le colonne da aggiungere e nella funzione *down* faccio il *dropColumn*
+
+- Faccio `php artisan migrate` per vederle nel DB
+
+- Aggiungo i due campi nel *fillable* 
+
+- Importo lo *Storage* in *ProjectController*:
+`use Illuminate\Support\Facades\Storage;`
+
+- Nella funzione *store* verifico se è stata caricata un'immagine, salvo il nome dell'immagine, salvo l'immagine nella cartella *uploads* e il percorso
+
+- In *show.blade.php* inserisco `{{asset('storage/' . $project->image_path)}}` per visualizzare l'immagine
+
+- In *create.blade.php* faccio l'anteprima dell'immagine attraverso la funzione *showImage* e la invoco nel campo di input dell'immagine con *onchange*:<br>
+      `function showImage(event){`<br>
+          `const tagImage = document.getElementById('prev-image');`<br>
+          `tagImage.src = URL.createObjectURL(event.target.files[0]);`<br>
+        `}`
+

@@ -9,7 +9,7 @@
   <p>{{$date_formatted}}</p>
   <p>{!!$project->text!!}</p>
   <div>
-    <img src="{{asset('storage/' . $project->image_path)}}" alt="">
+    <img class="w-50" src="{{asset('storage/' . $project->image_path)}}" alt="{{$project->title}}">
   </div>
 
   <a href="{{route('admin.projects.index')}}" class="my-4 btn btn-success">Indietro</a>

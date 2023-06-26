@@ -55,11 +55,13 @@
       <label for="file" class="form-label fw-bold">Immagine</label>
       <input
       type="file"
-      class="form-control @error('file') is-invalid @enderror"
+      onchange="showImage(event)"
+      class="form-control"
       id="image"
       name="image">
     </div>
 
+    <img width="150px" id="prev-image" src="" alt="">
 
     <button type="submit" class="btn btn-primary">Invia</button>
   </form>
@@ -73,6 +75,12 @@
       .catch( error => {
           console.error( error );
       } );
+
+  function showImage(event){
+    const tagImage = document.getElementById('prev-image');
+    tagImage.src = URL.createObjectURL(event.target.files[0]);
+    // console.log(URL.createObjectURL(event.target.files[0]));
+  }
 </script>
 
 @endsection

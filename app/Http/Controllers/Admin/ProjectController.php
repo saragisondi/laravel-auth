@@ -49,15 +49,20 @@ class ProjectController extends Controller
          // dd($request->all());
         $form_data = $request->all();
 
+        // dd($form_data);
+
         $form_data['slug'] = Project::generateSlug($form_data['title']);
         $form_data['date'] = date('Y-m-d');
 
         if(array_key_exists('image',$form_data)){
-          Storage::put('uploads', $form_data['image']);
 
           $form_data['image_original_name'] = $request->file('image')->getClientOriginalName();
 
           $form_data['image_path'] = Storage::put('uploads', $form_data['image']);
+
+          // dd($form_data);
+
+
         }
 
         $new_project = new Project();

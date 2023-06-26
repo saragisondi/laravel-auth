@@ -4,6 +4,297 @@ PORTFOLIO
 ## 1)
 
 ### **Descrizione**:
-Ripercorriamo gli steps fatti a lezione ed iniziamo un nuovo progetto usando laravel breeze ed il pacchetto Laravel 9 Preset con autenticazione.
-Separamo gli ambienti Guest da quelli Admin per quanto riguarda stili, js, controller, viste e layout come abbiamo visto in classe.
+Iniziare a creare il progetto usando laravel breeze ed il pacchetto Laravel 9 Preset con autenticazione, separando gli ambienti Guest da quelli Admin per quanto riguarda stili, js, controller, viste e layout.
 
+### **Steps:**
+ *Creazione del progetto:*
+- Creo il progetto: `composer create-project --prefer-dist laravel/laravel:^9.2 laravel_auth`
+
+- Utilizzo il composer: `composer require laravel/breeze --dev`
+
+- Installo breeze: `php artisan breeze:install `
+
+- Aggiungo il pacchetto Pacifici: `composer require pacificdev/laravel_9_preset`
+
+- Aggiungo Bootstrap: `php artisan preset:ui bootstrap --auth`
+
+- Installo Vue: `npm i`
+
+- Creo un nuovo DB in *php MyAdmin*
+
+- Nel file *.env* inserisco il nome del DB e controlle che le credenziali siano corrette
+
+- Lancio i server: `npm run dev` e `php artisan serve`
+
+<br>
+
+ *Separazione degli ambienti:*
+
+- Creo il *PageController* che mi restituisce la vista della *home* visibile all'utente: `php artisan make: controller Guest/PageController` 
+
+- Collego la rotta della *home* al *PageController*
+
+- Creo *appGuest* in scss e in js, li aggiungo in *vit.config.js* e modifico lo *script* in *guest.blade.php* 
+
+- Creo il *DashbordController* che mi restituisce la vista della *admin.home*:  `php artisan make:controller Admin/DashbordController`
+
+- Modifico `public const HOME = '/admin'` in  *RouteServiceProvider* poi in *web* raggruppo tutte le rotte che hanno: <br>
+  - il *middleware(['auth', 'verified'])* che hanno <br>
+  - il *name* che inizia con *admin.* <br>
+  - il *prefisso* che inzia con *admin* <br>
+
+  Faccio una funzione di callback per raggrupparle:
+   
+   - Collego la rotta della *home* al *DashbordController* : <br>
+   `->group(function(){` 
+
+        `Route::get('/', [DashbordController::class, 'index'])->name('home');` <br>
+   `}`
+
+<br>
+
+## 2)
+
+### **Descrizione**:
+Creare la CRUD del Portfolio.
+Immaginare quali dati servono per un portfolio e quindi generare la migration.
+Il seeder è opzionale, l’importante che tutta la CRUD funzioni correttamente con tutte le funzionalità viste.
+
+**BONUS:** in *edit* e *create* sostituire la textarea con un CK Editor.
+
+<br>
+
+*Layout:*
+- Creo una navbar con il link che mi porta alla *Home*
+
+- Creo un aside con i link che mi portano:
+
+  - *Dashbord*
+  - *Lista Progetti*
+  - *Creazione di un nuovo progetto*
+
+*Migration:*
+
+- Creo il model e la migration: `php artisan make:model Project -m`
+
+- Creo i records della tabella *Projects*
+
+- Lancio la migration: `php artisan migrate`
+
+*Seeder:*
+
+- Creo il seeder: `php artisan make:seeder ProjectsTableSeeder`
+
+- Importo il *Models\Project* e il *Faker\Generator*
+
+- Utilizzo il *Faker* per popolare il DB
+
+- Faccio una funzione per creare lo *Slug* dentro il *Models\Project*: <br>
+
+  `public static function generateSlug($str){` <br>
+        `$slug = Str::slug($str, '-');` <br>
+        `$original_slug = $slug;` <br>
+        `$slug_exists = Project::where('slug', $slug)->first();` <br>
+        `$c = 1;` <br>
+        `while($slug_exists){` <br>
+            `$slug = $original_slug . '-' . $c;` <br>
+            `$slug_exists = Project::where('slug', $slug)->first();` <br>
+            `$c++;` <br>
+        `}` <br>
+        `return $slug;` <br>
+      `}` <br>
+
+<br>
+
+- Richiamo lo *Slug* dentro la funzione del *Faker*:
+`$new_project -> slug = Project::generateSlug($new_project->title);`
+
+- Lancio il seeder: `php artisan db:seed --class=ProjectsTableSeeder`
+<br>
+<br>
+
+- Nelle *view* creo una cartella *Projects* dove andrò a mettere:
+
+  - *Index*
+  - *Home*
+  - *Show*
+  - *Create*
+  - *Edit*
+  - *Delete*
+
+<br>
+
+###  **Index:**
+- Creo il *ProjectController* e dentro la *function index* 
+  - Faccio una query per vedere tutti i dati 
+  - Creo il paginator: ` $projects = Project::paginate(10);`
+  - Includo il paginator in *AppServiceProvider:* `use Illuminate\Pagination\Paginator;` <br>
+  Nella funzione boot inserisco: `Paginator::useBootstrap();` <br>
+  In *index.blade.php* inserisco: `$post->links()`
+  - Metto la vista della *index* nel return
+  
+<br>
+
+- Faccio un *foreach* dentro *index.blade.php* per stamparli in pagina
+
+- Creo i link e le rotte per:
+  - *Show* 
+  - *Edit* 
+  - *Delete*
+
+<br>
+
+- Aggiungo la rotta alla funzione di callback in *web*:
+    `Route::resource('projects', ProjectController::class);`
+    
+    <br>
+
+- Nell'**aside** collego l'*href* del link:
+  - *Dashbord* nella navbar alla rotta *home*
+  - *Projects* nella navbar alla rotta *index*
+  - *New Project* nella navbar alla rotta *create*
+
+  <br>
+
+###  **Home:**
+
+  - Inserisco l'ultimo progetto e il numero dei progetti creati
+  
+  - Nella funzione *index* del *DashbordController*:
+    `$n_project = Project::all()->count();`
+    `$last_project = Project::orderby('id', 'desc')->first();`
+
+<br>
+
+ ###  **Show:**
+
+  - Formatto la data: <br> 
+  `$date = date_create($project->date);` <br> 
+  `$date_formatted = date_format($date, 'd/m/Y' );`
+
+  - Nel return inserisco la vista *show* , il *project* e *date_formatted*
+
+
+<br>
+
+###  **Create:**
+
+- Nel return inserisco la vista *create*
+
+- In *create.blade.php*:
+    - Faccio un form con la rotta che punta allo *store* 
+    - Inserisco tutti i campi della migration
+    - Inserisco il *CK Editor:* <br>
+      `<script>`<br>
+  `ClassicEditor`<br>
+      `.create( document.querySelector( '#text' ) )`<br>
+      `.catch( error => {`<br>
+         ` console.error( error );`<br>
+      `} );`<br>
+`</script>`
+
+
+<br>
+
+
+### **Store:**
+
+- Salvo il dato che ricevo:<br>
+ `$form_data = $request->all();`
+
+- Creo lo slug: <br>
+  `$form_data['slug'] = Project::generateSlug($form_data['title']);`
+  `$form_data['date'] = date('Y-m-d');`
+
+- Creo una nuova istanza: <br>
+  `$new_project = new Project();`
+
+- Passo gli elementi al *controller* tramite il *fillable*:
+  `$new_project ->fill($form_data);`
+
+- Salvo:
+  `$new_project->save();`
+
+- Inserisco nel *return* il *redirect* della route *show*
+
+- All'interno del *Models* faccio un array *protected Fillable*: <br>
+
+  `protected $fillable = [`<br>
+        `'title',`<br>
+        `'slug',`<br>
+        `'text',`<br>
+        `'date',`<br>
+        `'reading_time',`<br>
+        `'image_path',`<br>
+        `'image_original_name'`<br>
+      `];`
+
+ **Validazione:**
+  - Creo una *Request*: `php artisan make:request ProjectRequest`
+
+  - Modifico il return in *true* nella funzione *authorize*
+
+  - Inserisco le regole nel return della funzione *rules*
+
+  - Creo una funzione *messages* per inserire i messaggi che verranno stampati in pagina in caso di errore
+
+  - Nella funzione *store* in *ProjectController* gli passo il parametro *ProjectRequest*
+
+- Inserisco la condizione di errore nel file *create.blade.php*:
+
+`@if($errors->any())`<br>
+  `<div class="alert alert-danger" role="alert">`<br>
+    `<ul>`<br>
+      `@foreach ($errors->all() as $error)`<br>
+      `<li>{{$error}}</li>`<br>
+      `@endforeach`<br>
+    `</ul>`<br>
+  `</div>`<br>
+  `@endif`<br>
+
+  - Inserisco i messaggi  per visualizzarli in pagina
+  
+  <br>
+
+###  **Edit:**
+
+- Nel return inserisco la vista *edit*
+
+- In *edit.blade.php*:
+    - Faccio un form con la rotta che punta al *update* e oltre al metodo *POST* aggiungo il `@method('PUT')`
+    - Inserisco tutti i campi della migration
+    - Inserisco il *CK Editor* <br>
+
+<br>
+
+###  **Update:**
+
+- Passo i paramentri: `ProjectRequest $request,Project $project`
+
+- Salvo il dato che ricevo: <br>
+  `$form_data=$request->all();`
+  `$project->update($form_data);`
+  
+- Nel return inserisco il *redirect* alla rotta *show*
+
+<br>
+
+###  **Delete:**
+
+- Nel return inserisco il redirect alla rotta *index* con la chiave *deleted* e nel valore inserisco il messaggio di eliminazione
+
+- Nel file *index.blade.php* faccio un form con *action* la rotta *destroy* e oltre al metodo *POST* aggiungo anche il `@method('DELETE')`
+
+- Creo il bottone 'elimina'
+
+<br>
+
+<br>
+
+## 3)
+
+### **Descrizione**:
+Completare la CRUD del portfolio con l’aggiunta dell’immagine e la sua relativa eliminazione.
+
+
+- 
